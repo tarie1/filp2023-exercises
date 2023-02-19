@@ -15,10 +15,10 @@ class Vector(val x: Double, val y: Double) {
     if (x != 0 && y != 0) {
       new Vector(x / Math.sqrt(x * x + y * y), y / Math.sqrt(x * x + y * y))
     } else {
-      if (x==0){
+      if (x == 0) {
         new Vector(0, y / Math.sqrt(x * x + y * y))
       }
-      if (y == 0){
+      if (y == 0) {
         new Vector(x / Math.sqrt(x * x + y * y), 0)
       }
       new Vector(0, 0)
@@ -38,7 +38,7 @@ object Vector {
   def sum(list: List[Vector]): Vector = {
     var x: Double = 0
     var y: Double = 0
-    for (vector <- list){
+    for (vector <- list) {
       x = x + vector.x
       y = y + vector.y
     }

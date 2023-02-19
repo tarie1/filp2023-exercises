@@ -1,11 +1,15 @@
 package exercises01
 
 class Vector(val x: Double, val y: Double) {
-  def +(other: Vector): Vector = new Vector(x.+(other.x), y.+(other.y))
+  def +(other: Vector): Vector = new Vector(x + other.x, y + other.y)
 
   def -(other: Vector): Vector = new Vector(x - other.x, y - other.y)
 
-  def *(scalar: Double): Vector = new Vector(x * scalar, y * scalar)
+  def *(scalar: Double): Vector = {
+    val new_x: Double = x * scalar
+    val new_y: Double = y * scalar
+    new Vector(new_x, new_y)
+  }
 
   def unary_- : Vector = new Vector(-x, -y)
 
@@ -26,7 +30,12 @@ class Vector(val x: Double, val y: Double) {
   }
 
   override def equals(other: Any): Boolean = {
-    this.hashCode() == other.hashCode()
+    other match {
+      case other: Vector => {
+        other.x == this.x && other.y == this.y
+      }
+      case _ => false
+    }
   }
   // Vector(x, y)
   override def toString: String = new String(s"Vector($x, $y)")

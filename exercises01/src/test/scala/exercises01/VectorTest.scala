@@ -69,5 +69,10 @@ class VectorTest extends org.scalatest.wordspec.AnyWordSpec {
     "support equals operation" in {
       assert(new Vector(10.0, 20.0) == new Vector(10.0, 20.0))
     }
+
+    "return false on equals with incompatible types" in {
+      assert(new Vector(10.0, 20.0) != 0)
+      assert(new Vector(10.0, 20.0) != "Vector(10.0, 20.0)")
+    }
   }
 }

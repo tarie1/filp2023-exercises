@@ -21,7 +21,7 @@ class Vector(val x: Double, val y: Double) {
     if (x != 0) {
       norm_x = x / this.euclideanLength
     }
-    if (y != 0){
+    if (y != 0) {
       norm_y = y / this.euclideanLength
     }
     new Vector(norm_x, norm_y)

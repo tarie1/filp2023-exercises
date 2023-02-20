@@ -16,17 +16,15 @@ class Vector(val x: Double, val y: Double) {
   def euclideanLength: Double = Math.sqrt(x * x + y * y)
 
   def normalized: Vector = {
-    if (x != 0 && y != 0) {
-      new Vector(x / Math.sqrt(x * x + y * y), y / Math.sqrt(x * x + y * y))
-    } else {
-      if (x == 0) {
-        new Vector(0, y / Math.sqrt(x * x + y * y))
-      }
-      if (y == 0) {
-        new Vector(x / Math.sqrt(x * x + y * y), 0)
-      }
-      new Vector(0, 0)
+    var norm_x: Double = x
+    var norm_y: Double = y
+    if (x != 0) {
+      norm_x = x / this.euclideanLength
     }
+    if (y != 0){
+      norm_y = y / this.euclideanLength
+    }
+    new Vector(norm_x, norm_y)
   }
 
   override def equals(other: Any): Boolean = {

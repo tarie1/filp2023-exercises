@@ -51,5 +51,5 @@ object Vector {
     new Vector(x, y)
   }
 
-  def unapply(arg: Vector): Option[(Double, Double)] = Option(arg.x, arg.y)
+  def unapply(arg: Vector): Option[(Double, Double)] = Some((arg.x, arg.y))
 }

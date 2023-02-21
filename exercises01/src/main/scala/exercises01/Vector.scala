@@ -16,13 +16,12 @@ class Vector(val x: Double, val y: Double) {
   def euclideanLength: Double = Math.sqrt(x * x + y * y)
 
   def normalized: Vector = {
-    var norm_x: Double = x
-    var norm_y: Double = y
-    if (x != 0) {
-      norm_x = x / this.euclideanLength
-    }
-    if (y != 0) {
-      norm_y = y / this.euclideanLength
+    var norm_x: Double    = x
+    var norm_y: Double    = y
+    val euclidean: Double = this.euclideanLength
+    if (x != 0 || y != 0) {
+      norm_x = x / euclidean
+      norm_y = y / euclidean
     }
     new Vector(norm_x, norm_y)
   }
@@ -36,7 +35,7 @@ class Vector(val x: Double, val y: Double) {
     }
   }
   // Vector(x, y)
-  override def toString: String = new String(s"Vector($x, $y)")
+  override def toString: String = s"Vector($x, $y)"
 }
 
 object Vector {

@@ -32,8 +32,7 @@ class Game(controller: GameController) {
           if (player.toInt < number) controller.numberIsBigger()
           else if (player.toInt > number) controller.numberIsSmaller()
           else controller.wrongInput()
-        }
-        catch{
+        } catch {
           case e: NumberFormatException => controller.wrongInput()
         }
       }

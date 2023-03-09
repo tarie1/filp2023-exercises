@@ -1,15 +1,20 @@
 package exercises02
 
+import scala.util.matching.Regex
+
 object Counter {
+
+  val notEng   = "[^a-z'-]".r
+  val notNum   = "[,. ]*[a-zа-я-!?:\\s]".r
+  val notWords = "[^a-zа-яё'-]".r
 
   /**
     * Посчитать количество вхождений слов в тексте
     * слово отделено символами [\s.,!?:\n\t\r]
     */
   def countWords(text: String): Map[String, Int] = {
-    text.toLowerCase
-      .split("[^a-zа-яё'-]")
-      .filterNot(_ == "")
+    notWords
+      .split(text.toLowerCase)
       .foldLeft(Map.empty[String, Int]) { (count, word) =>
         count + (word -> (count.getOrElse(word, 0) + 1))
       }
@@ -20,9 +25,8 @@ object Counter {
     * слово отделено символами [\s.,!?:\n\t\r]
     */
   def countEnglishWords(text: String): Map[String, Int] = {
-    text.toLowerCase
-      .split("[^a-z'-]")
-      .filterNot(_ == "")
+    notEng
+      .split(text.toLowerCase)
       .foldLeft(Map.empty[String, Int]) { (count, word) =>
         count + (word -> (count.getOrElse(word, 0) + 1))
       }
@@ -33,9 +37,8 @@ object Counter {
     * число отделено символами [\s!?:\n\t\r]
     */
   def countNumbers(text: String): Map[String, Int] = {
-    text.toLowerCase
-      .split("[,. ]*[a-zа-я-!?:\\s]")
-      .filterNot(_ == "")
+    notNum
+      .split(text.toLowerCase)
       .foldLeft(Map.empty[String, Int]) { (count, word) =>
         count + (word -> (count.getOrElse(word, 0) + 1))
       }

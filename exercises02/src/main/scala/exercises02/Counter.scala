@@ -15,6 +15,7 @@ object Counter {
   def countWords(text: String): Map[String, Int] = {
     notWords
       .split(text.toLowerCase)
+      .filterNot(_ == "")
       .foldLeft(Map.empty[String, Int]) { (count, word) =>
         count + (word -> (count.getOrElse(word, 0) + 1))
       }
@@ -27,6 +28,7 @@ object Counter {
   def countEnglishWords(text: String): Map[String, Int] = {
     notEng
       .split(text.toLowerCase)
+      .filterNot(_ == "")
       .foldLeft(Map.empty[String, Int]) { (count, word) =>
         count + (word -> (count.getOrElse(word, 0) + 1))
       }
@@ -39,6 +41,7 @@ object Counter {
   def countNumbers(text: String): Map[String, Int] = {
     notNum
       .split(text.toLowerCase)
+      .filterNot(_ == "")
       .foldLeft(Map.empty[String, Int]) { (count, word) =>
         count + (word -> (count.getOrElse(word, 0) + 1))
       }

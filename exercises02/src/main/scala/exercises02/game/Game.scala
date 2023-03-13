@@ -1,5 +1,7 @@
 package exercises02.game
 
+import scala.annotation.tailrec
+
 class Game(controller: GameController) {
 
   /**
@@ -16,25 +18,24 @@ class Game(controller: GameController) {
     *
     * @param number загаданное число
     */
-  def play(number: Int): Unit = {
-    var bool: Boolean = true
-    while (bool) {
-      controller.askNumber()
-      val player = controller.nextLine()
-      if (player.equals(GameController.IGiveUp)) {
-        controller.giveUp(number)
-        bool = false
-      } else if (player == number.toString) {
-        controller.guessed()
-        bool = false
+  @tailrec
+  final def play(number: Int): Unit = {
+    controller.askNumber()
+    val player = controller.nextLine()
+    if (player == GameController.IGiveUp) {
+      controller.giveUp(number)
+    } else if (player == number.toString) {
+      controller.guessed()
+    } else {
+      if (player.toIntOption.getOrElse(15000) < number) {
+        controller.numberIsBigger()
+        play(number)
+      } else if (player.toIntOption.getOrElse(-1) > number) {
+        controller.numberIsSmaller()
+        play(number)
       } else {
-        try {
-          if (player.toInt < number) controller.numberIsBigger()
-          else if (player.toInt > number) controller.numberIsSmaller()
-          else controller.wrongInput()
-        } catch {
-          case e: NumberFormatException => controller.wrongInput()
-        }
+        controller.wrongInput()
+        play(number)
       }
     }
   }

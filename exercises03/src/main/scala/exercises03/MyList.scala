@@ -20,7 +20,7 @@ object MyList {
     @tailrec
     def reverse_loop[A](result: MyList[A], remaining: MyList[A]): MyList[A] = {
       result match {
-        case Nil           => remaining
+        case Nil              => remaining
         case Cons(head, tail) => reverse_loop(tail, Cons(head, remaining))
       }
     }

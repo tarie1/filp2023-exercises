@@ -22,18 +22,18 @@ class Game(controller: GameController) {
   final def play(number: Int): Unit = {
     controller.askNumber()
     val player = controller.nextLine()
-    if (player == GameController.IGiveUp) {
-      controller.giveUp(number)
-    } else if (player == number.toString) {
-      controller.guessed()
-    } else {
-      if (player.toIntOption.getOrElse(15000) < number) {
-        controller.numberIsBigger()
-        play(number)
-      } else if (player.toIntOption.getOrElse(-1) > number) {
+    (player.toIntOption, player) match {
+      case (Some(num), _) if num == number => controller.guessed()
+      case (_, GameController.IGiveUp)     => controller.giveUp(number)
+      case (Some(num), _) if num > number => {
         controller.numberIsSmaller()
         play(number)
-      } else {
+      }
+      case (Some(num), _) if num < number => {
+        controller.numberIsBigger()
+        play(number)
+      }
+      case default => {
         controller.wrongInput()
         play(number)
       }

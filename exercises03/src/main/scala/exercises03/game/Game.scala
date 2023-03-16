@@ -16,7 +16,7 @@ object Game {
       case NumberIsBigger  => GameController => GameController.numberIsBigger()
       case NumberIsSmaller => GameController => GameController.numberIsSmaller()
       case Guessed         => GameController => GameController.guessed()
-      case WrongInput      => GameController => GameController.wrongInput()
+      case WrongInput      => _.wrongInput()
     }
   }
 

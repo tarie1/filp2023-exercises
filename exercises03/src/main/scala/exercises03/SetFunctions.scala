@@ -5,7 +5,7 @@ object SetFunctions {
 
   def contains[A](s: Set[A], elem: A): Boolean = s(elem)
 
-  def singletonSet[A](elem: A): Set[A] = element => List(elem).contains(element)
+  def singletonSet[A](elem: A): Set[A] = element => elem == element
 
   def union[A](s: Set[A], t: Set[A]): Set[A] = element => s(element) || t(element)
 

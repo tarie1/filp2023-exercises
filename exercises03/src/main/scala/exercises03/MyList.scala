@@ -11,9 +11,15 @@ case object Nil extends MyList[Nothing]
 
 object MyList {
 
-  def sum(list: MyList[Int]): Int = list match {
-    case Nil              => 0
-    case Cons(head, tail) => head + sum(tail)
+  def sum(list: MyList[Int]): Int = {
+    @tailrec
+    def sum_loop(result: MyList[Int], remaining: Int): Int = {
+      result match {
+        case Nil              => remaining
+        case Cons(head, tail) => sum_loop(tail, remaining + head)
+      }
+    }
+    sum_loop(list, 0)
   }
 
   def reverse[A](list: MyList[A]): MyList[A] = {

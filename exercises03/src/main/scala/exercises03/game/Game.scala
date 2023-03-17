@@ -12,10 +12,10 @@ object Game {
   }
   def action(state: State, number: Int): GameController => Unit = {
     state match {
-      case GiveUp          => GameController => GameController.giveUp(number)
-      case NumberIsBigger  => GameController => GameController.numberIsBigger()
-      case NumberIsSmaller => GameController => GameController.numberIsSmaller()
-      case Guessed         => GameController => GameController.guessed()
+      case GiveUp          => _.giveUp(number)
+      case NumberIsBigger  => _.numberIsBigger()
+      case NumberIsSmaller => _.numberIsSmaller()
+      case Guessed         => _.guessed()
       case WrongInput      => _.wrongInput()
     }
   }

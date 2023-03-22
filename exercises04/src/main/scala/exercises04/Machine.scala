@@ -28,7 +28,11 @@ object Machine {
         run(Machine(false, candies, coins + 1), inputs)
       case (Machine(false, candies, coins), Input.Turn :: inputs) =>
         run(Machine(true, candies - 1, coins), inputs)
-      case (Machine(false, 0, coins), inputs) => (Machine(false, 0, coins), inputs)
-      case (machine, Nil)                     => (machine, inputs)
+      case (Machine(false, 0, coins), Input.Turn :: inputs) => (machine, Input.Turn :: inputs)
+      case (Machine(false, 0, coins), Input.Coin :: inputs) => (machine, Input.Coin :: inputs)
+      case (Machine(true, 0, coins), Input.Coin :: inputs)  => (machine, Input.Coin :: inputs)
+      case (Machine(true, 0, coins), Input.Turn :: inputs)  => (machine, Input.Turn :: inputs)
+      case (machine, Nil)                                   => (machine, inputs)
+      case _                                                => (machine, Nil)
     }
 }

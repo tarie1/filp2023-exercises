@@ -13,7 +13,8 @@ class Calculator[T: Integral] {
         calculate(left) match {
           case Success(val1) =>
             calculate(right) match {
-              case Success(val2) => Success(val1 * val2)
+              case DivisionByZero => DivisionByZero
+              case Success(val2)  => Success(val1 * val2)
             }
         }
       case Plus(left, right) =>
@@ -28,7 +29,8 @@ class Calculator[T: Integral] {
         calculate(left) match {
           case Success(val1) =>
             calculate(right) match {
-              case Success(val2) => Success(val1 - val2)
+              case DivisionByZero => DivisionByZero
+              case Success(val2)  => Success(val1 - val2)
             }
         }
       case Div(left, right) =>

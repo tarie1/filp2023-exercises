@@ -23,12 +23,12 @@ object Machine {
   }
   @tailrec
   def run(machine: Machine, inputs: List[Input]): (Machine, List[Input]) =
-    (machine, Input) match {
-      case (Machine(true, candies, coins), Input) =>
-        run(Machine(false, candies, coins + 1), inputs.appended(Input.Coin))
-      case (Machine(false, candies, coins), Input) =>
-        run(Machine(true, candies - 1, coins), inputs.appended(Input.Turn))
-      case (Machine(false, 0, coins), Input) => (Machine(false, 0, coins), inputs)
-
+    (machine, inputs) match {
+      case (Machine(true, candies, coins), Input.Coin :: inputs) =>
+        run(Machine(false, candies, coins + 1), inputs)
+      case (Machine(false, candies, coins), Input.Turn :: inputs) =>
+        run(Machine(true, candies - 1, coins), inputs)
+      case (Machine(false, 0, coins), inputs) => (Machine(false, 0, coins), inputs)
+      case (machine, Nil)                     => (machine, inputs)
     }
 }

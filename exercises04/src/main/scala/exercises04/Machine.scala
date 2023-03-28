@@ -29,7 +29,6 @@ object Machine {
       case (Machine(false, candies, coins), Input.Turn :: inputs) =>
         run(Machine(true, candies - 1, coins), inputs)
       case (Machine(locked, 0, coins), _) => (machine, inputs)
-      case (machine, Nil)                => (machine, inputs)
-      case _                             => (machine, Nil)
+      case _                              => (machine, Nil)
     }
 }

@@ -16,40 +16,12 @@ object Tree {
     }
   }
 
-  def size[A](t: Tree[A]): Int = {
-    @tailrec
-    def size_loop(tree: List[Tree[A]], num: Int): Int =
-      tree match {
-        case Nil                              => num
-        case Leaf(value) :: remaining         => size_loop(remaining, num + 1)
-        case Branch(left, right) :: remaining => size_loop(left :: right :: remaining, num + 1)
-      }
-    size_loop(List(t), 0)
-  }
+  def size[A](t: Tree[A]): Int = fold(t)(value => 1)(_ + _ + 1)
 
-  def max(t: Tree[Int]): Int = {
-    def max_loop(tree: Tree[Int], num: Int): Int =
-      tree match {
-        case Leaf(value)         => num max value
-        case Branch(left, right) => max_loop(left, num) max max_loop(right, num)
-      }
-    max_loop(t, -1000)
-  }
+  def max(t: Tree[Int]): Int = fold(t)(value => value)(_ max _)
 
-  def depth[A](t: Tree[A]): Int = {
-    def depth_loop(tree: Tree[A], num: Int): Int = {
-      tree match {
-        case Leaf(value)         => num
-        case Branch(left, right) => depth_loop(left, num + 1) max depth_loop(right, num + 1)
-      }
-    }
-    depth_loop(t, 1)
-  }
+  def depth[A](t: Tree[A]): Int = fold(t)(value => 1)((left, right) => 1 + (left max right))
 
   // тут может пригодиться явное указание типа
-  def map[A, B](t: Tree[A])(f: A => B): Tree[B] =
-    t match {
-      case Leaf(value)         => Leaf(f(value))
-      case Branch(left, right) => Branch(map(left)(f), map(right)(f))
-    }
+  def map[A, B](t: Tree[A])(f: A => B): Tree[B] = fold(t)(value => Leaf(f(value)): Tree[B])(Branch(_, _))
 }

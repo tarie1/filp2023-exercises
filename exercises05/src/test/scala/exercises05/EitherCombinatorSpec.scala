@@ -46,7 +46,6 @@ class EitherCombinatorSpec extends AnyWordSpec {
       assert(Either.fromOption(Some(42))(Error("abc")) == Right(42))
     }
   }
-
   "Either.traverse" should {
     "work" in {
       val f: String => Either[Error, Int] = str =>
@@ -61,7 +60,6 @@ class EitherCombinatorSpec extends AnyWordSpec {
       assert(Either.traverse(List("1", "2", "3", "abc", "def", "ghi"))(f) == Left(Error("it's not a number")))
     }
   }
-
   "Either.sequence" should {
     "work" in {
       assert(Either.sequence(Nil) == Right(Nil))

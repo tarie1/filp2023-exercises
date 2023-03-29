@@ -3,21 +3,40 @@ package exercises05.either
 object EitherCombinators {
 
   sealed trait Either[+A, +B] {
-    def orElse[EE >: A, C >: B](other: => Either[EE, C]): Either[EE, C] = ???
-
-    def map2[AA >: A, BB, C](other: => Either[AA, BB])(f: (B, BB) => C): Either[AA, C] = ???
+    def orElse[EE >: A, C >: B](other: => Either[EE, C]): Either[EE, C] =
+      this match {
+        case Right(_) => this
+        case Left(_)  => other
+      }
+    def map2[AA >: A, BB, C](other: => Either[AA, BB])(f: (B, BB) => C): Either[AA, C] =
+      for {
+        value  <- this
+        either <- other
+      } yield f(value, either)
+    def map[E](f: B => E): Either[A, E] = this match {
+      case Left(value) => Left(value)
+      case Right(val1) => Right(f(val1))
+    }
+    def flatMap[AA >: A, E](f: B => Either[AA, E]): Either[AA, E] = this match {
+      case Right(value) => f(value)
+      case Left(value)  => Left(value)
+    }
   }
-
   case class Left[+A, +B](get: A) extends Either[A, B]
 
   case class Right[+A, +B](get: B) extends Either[A, B]
 
   object Either {
-    def fromOption[A, B](option: Option[B])(a: => A): Either[A, B] = ???
+    def fromOption[A, B](option: Option[B])(a: => A): Either[A, B] = option match {
+      case Some(value) => Right(value)
+      case None        => Left(a)
+    }
 
-    def traverse[E, A, B](list: List[A])(f: A => Either[E, B]): Either[E, List[B]] = ???
-
-    def sequence[E, A](list: List[Either[E, A]]): Either[E, List[A]] = ???
+    def traverse[E, A, B](list: List[A])(f: A => Either[E, B]): Either[E, List[B]] = list match {
+      case Nil          => Right(Nil)
+      case head :: tail => f(head) flatMap (value => traverse(tail)(f) map (value :: _))
+    }
+    def sequence[E, A](list: List[Either[E, A]]): Either[E, List[A]] =
+      traverse(list)(value => value)
   }
-
 }

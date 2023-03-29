@@ -1,5 +1,7 @@
 package exercises05
 
+import java.util
+
 /**
   * Необходимо реализовать prepend, append, withFilter и toList
   * Метод prepend принимает на вход список s, добавляемый в начало
@@ -12,17 +14,16 @@ package exercises05
   * Метод toList применяет все накопленные операции и отдаёт итоговый список.
   */
 final class DiffList[A](calculate: List[A] => List[A]) {
-  def prepend(s: List[A]): DiffList[A] = ???
+  def prepend(s: List[A]): DiffList[A] = new DiffList[A](calculate andThen(s ++ _))
 
-  def append(s: List[A]): DiffList[A] = ???
+  def append(s: List[A]): DiffList[A] = new DiffList[A](calculate andThen(_ ++ s))
 
   def withFilter(f: A => Boolean): DiffList[A] = ???
-
   def toList: List[A] = ???
 }
 
 object DiffList extends App {
-  def apply[A]: DiffList[A] = ???
+  def apply[A]: DiffList[A] = new DiffList(List[A])
 
-  def singletonList[A](el: A): DiffList[A] = ???
+  def singletonList[A](el: A): DiffList[A] = new DiffList[A](el => el)
 }

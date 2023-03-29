@@ -23,8 +23,8 @@ class Calculator[T: Integral] {
       case If(iff, cond, left, right) =>
         calculate(cond).flatMap(value =>
           iff(value) match {
-            case true  => calculate(left).map(value => value)
-            case false => calculate(right).map(value => value)
+            case true  => calculate(left)
+            case false => calculate(right)
           }
         )
     }

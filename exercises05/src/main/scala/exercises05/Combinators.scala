@@ -1,5 +1,4 @@
 package exercises05
-
 object Combinators {
   // Есть цепочка hefEgGeGFEgGgeHE
   // в данной цепочке есть различные типы частиц
@@ -15,5 +14,15 @@ object Combinators {
   //
   // Напишите функцию, используя комбинаторы стандартной библиотеки,
   // которая проведёт полную реакцию
-  def react(ipt: String): String = ???
+  final val regex = "fF|Ff|Ee|eE|hH|Hh|Gg|gG".r
+  def react(ipt: String): String = {
+    ipt.foldLeft("")((value1, value2) =>
+      if (regex.findAllIn(value1 + value2).nonEmpty)
+        value1.slice(0, value1.length - 1)
+      else value1 + value2
+    ) match {
+      case result if result == ipt => result
+      case string                  => react(string)
+    }
+  }
 }

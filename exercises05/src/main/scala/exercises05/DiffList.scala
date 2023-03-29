@@ -14,16 +14,16 @@ import java.util
   * Метод toList применяет все накопленные операции и отдаёт итоговый список.
   */
 final class DiffList[A](calculate: List[A] => List[A]) {
-  def prepend(s: List[A]): DiffList[A] = new DiffList[A](calculate andThen(s ++ _))
+  def prepend(s: List[A]): DiffList[A] = new DiffList[A](calculate andThen (s ++ _))
 
-  def append(s: List[A]): DiffList[A] = new DiffList[A](calculate andThen(_ ++ s))
+  def append(s: List[A]): DiffList[A] = new DiffList[A](calculate andThen (_ ++ s))
 
-  def withFilter(f: A => Boolean): DiffList[A] = ???
-  def toList: List[A] = ???
+  def withFilter(f: A => Boolean): DiffList[A] = new DiffList[A](value => calculate(value).filter(f))
+  def toList: List[A]                          = calculate(Nil)
 }
 
 object DiffList extends App {
-  def apply[A]: DiffList[A] = new DiffList(List[A])
+  def apply[A]: DiffList[A] = new DiffList[A](List[A])
 
-  def singletonList[A](el: A): DiffList[A] = new DiffList[A](el => el)
+  def singletonList[A](el: A): DiffList[A] = new DiffList[A](el :: _)
 }

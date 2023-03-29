@@ -4,9 +4,10 @@ object EitherCombinators {
 
   sealed trait Either[+A, +B] {
     def orElse[EE >: A, C >: B](other: => Either[EE, C]): Either[EE, C] =
-      this match {
-        case Right(_) => this
-        case Left(_)  => other
+      (this, other) match {
+        case (Right(_), _)      => this
+        case (Left(_), Left(_)) => this
+        case _                  => other
       }
     def map2[AA >: A, BB, C](other: => Either[AA, BB])(f: (B, BB) => C): Either[AA, C] =
       for {

@@ -13,23 +13,8 @@ object Examples {
     * если rawUser.banned, то вернуть None
     * используйте for-comprehension
     */
-  final val regex = "\\d{4}\\s\\d{6}".r
-  def transformToOption(rawUser: RawUser): Option[User] =
-    for {
-      firstName  <- rawUser.firstName
-      secondName <- rawUser.secondName
-      id         <- rawUser.id.toLongOption
-      if !rawUser.banned || firstName.isEmpty || secondName.isEmpty
-      passport = rawUser.passport match {
-        case Some(value) => value.matches(regex.regex)
-        case None        => true
-      }
-      if passport
-      pass = rawUser.passport match {
-        case Some(value) => Option(Passport(value.split(" ")(0).toLong, value.split(" ")(1).toLong))
-        case None        => None
-      }
-    } yield User(id, UserName(firstName, secondName, rawUser.thirdName), pass)
+  final private val regex                               = "\\d{4}\\s\\d{6}".r
+  def transformToOption(rawUser: RawUser): Option[User] = Either.toOption(transformToEither(rawUser))
 
   /**
     * если rawUser.firstName или rawUser.secondName == None, то функция должна вернуть Left(InvalidName)
@@ -45,19 +30,20 @@ object Examples {
     * используйте for-comprehension
     * но для того, чтобы for-comprehension заработал надо реализовать map и flatMap в Either
     */
+  private def passportParsing(passport: Option[String]): Option[None.type] = {
+    passport match {
+      case None                                      => Option(None)
+      case Some(value) if value.matches(regex.regex) => Option(None)
+      case _                                         => None
+    }
+  }
   def transformToEither(rawUser: RawUser): Either[Error, User] =
     for {
       ban        <- if (!rawUser.banned) Right(()) else Left(Banned)
       id         <- Either.fromOption(rawUser.id.toLongOption)(InvalidId)
       firstName  <- Either.fromOption(rawUser.firstName)(InvalidName)
       secondName <- Either.fromOption(rawUser.secondName)(InvalidName)
-      passport <- Either.fromOption(
-        rawUser.passport match {
-          case None                                      => Option(None)
-          case Some(value) if value.matches(regex.regex) => Option(None)
-          case _                                         => None
-        }
-      )(InvalidPassport)
+      passport   <- Either.fromOption(passportParsing(rawUser.passport))(InvalidPassport)
       pass = rawUser.passport match {
         case Some(value) => Option(Passport(value.split(" ")(0).toLong, value.split(" ")(1).toLong))
         case None        => None

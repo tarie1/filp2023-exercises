@@ -33,11 +33,16 @@ object EitherCombinators {
       case None        => Left(a)
     }
 
+    def toOption[A](either: Either[_, A]): Option[A] = either match {
+      case Right(value) => Some(value)
+      case _            => None
+    }
+
     def traverse[E, A, B](list: List[A])(f: A => Either[E, B]): Either[E, List[B]] = list match {
       case Nil          => Right(Nil)
       case head :: tail => f(head) flatMap (value => traverse(tail)(f) map (value :: _))
     }
     def sequence[E, A](list: List[Either[E, A]]): Either[E, List[A]] =
-      traverse(list)(value => value)
+      traverse(list)(identity)
   }
 }

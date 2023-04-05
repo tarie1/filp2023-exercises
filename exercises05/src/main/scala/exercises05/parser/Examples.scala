@@ -30,11 +30,10 @@ object Examples {
     * используйте for-comprehension
     * но для того, чтобы for-comprehension заработал надо реализовать map и flatMap в Either
     */
-  private def passportParsing(passport: Option[String]): Option[None.type] = {
+  private def passportParsing(passport: Option[String]): Option[Passport] = {
     passport match {
-      case None                                      => Option(None)
-      case Some(value) if value.matches(regex.regex) => Option(None)
-      case _                                         => None
+      case Some(value) => Option(Passport(value.split(" ")(0).toLong, value.split(" ")(1).toLong))
+      case None => None
     }
   }
   def transformToEither(rawUser: RawUser): Either[Error, User] =
@@ -43,10 +42,11 @@ object Examples {
       id         <- Either.fromOption(rawUser.id.toLongOption)(InvalidId)
       firstName  <- Either.fromOption(rawUser.firstName)(InvalidName)
       secondName <- Either.fromOption(rawUser.secondName)(InvalidName)
-      passport   <- Either.fromOption(passportParsing(rawUser.passport))(InvalidPassport)
-      pass = rawUser.passport match {
-        case Some(value) => Option(Passport(value.split(" ")(0).toLong, value.split(" ")(1).toLong))
-        case None        => None
-      }
+      passport   <- Either.fromOption(rawUser.passport match {
+        case None => Option(None)
+        case Some(value) if value.matches(regex.regex) => Option(None)
+        case _ => None
+      })(InvalidPassport)
+      pass = passportParsing(rawUser.passport)
     } yield User(id, UserName(firstName, secondName, rawUser.thirdName), pass)
 }

@@ -14,15 +14,14 @@ object Combinators {
   //
   // Напишите функцию, используя комбинаторы стандартной библиотеки,
   // которая проведёт полную реакцию
-  final val regex = "fF|Ff|Ee|eE|hH|Hh|Gg|gG".r
   def react(ipt: String): String = {
-    ipt.foldLeft("")((value1, value2) =>
-      if (regex.findAllIn(value1 + value2).nonEmpty)
-        value1.slice(0, value1.length - 1)
-      else value1 + value2
-    ) match {
-      case result if result == ipt => result
-      case string                  => react(string)
+    ipt.foldLeft("") {
+      case (currentString, next) =>
+        currentString.takeRight(1) match {
+          case element if next.isLower && next.toUpper.toString == element => currentString.dropRight(1)
+          case element if next.isUpper && next.toLower.toString == element => currentString.dropRight(1)
+          case _                                                           => currentString + next
+        }
     }
   }
 }

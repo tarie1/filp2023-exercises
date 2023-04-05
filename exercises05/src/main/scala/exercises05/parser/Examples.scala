@@ -13,7 +13,7 @@ object Examples {
     * если rawUser.banned, то вернуть None
     * используйте for-comprehension
     */
-  final private val regex                               = "\\d{4}\\s\\d{6}".r
+  final private val passportFormat                      = "(\\d{4}) (\\d{6})".r
   def transformToOption(rawUser: RawUser): Option[User] = Either.toOption(transformToEither(rawUser))
 
   /**
@@ -30,10 +30,10 @@ object Examples {
     * используйте for-comprehension
     * но для того, чтобы for-comprehension заработал надо реализовать map и flatMap в Either
     */
-  private def passportParsing(passport: Option[String]): Option[Passport] = {
+  private def passportParsing(passport: String): Option[Passport] = {
     passport match {
-      case Some(value) => Option(Passport(value.split(" ")(0).toLong, value.split(" ")(1).toLong))
-      case None        => None
+      case passportFormat(series, number) => Some(Passport(series.toLong, number.toLong))
+      case _                              => None
     }
   }
   def transformToEither(rawUser: RawUser): Either[Error, User] =
@@ -42,11 +42,8 @@ object Examples {
       id         <- Either.fromOption(rawUser.id.toLongOption)(InvalidId)
       firstName  <- Either.fromOption(rawUser.firstName)(InvalidName)
       secondName <- Either.fromOption(rawUser.secondName)(InvalidName)
-      passport <- Either.fromOption(rawUser.passport match {
-        case None                                      => Option(None)
-        case Some(value) if value.matches(regex.regex) => Option(None)
-        case _                                         => None
-      })(InvalidPassport)
-      pass = passportParsing(rawUser.passport)
-    } yield User(id, UserName(firstName, secondName, rawUser.thirdName), pass)
+      passport <- Either.fromOption(
+        if (rawUser.passport.isEmpty) Some(None) else rawUser.passport.flatMap(passportParsing).map(Some(_))
+      )(InvalidPassport)
+    } yield User(id, UserName(firstName, secondName, rawUser.thirdName), passport)
 }

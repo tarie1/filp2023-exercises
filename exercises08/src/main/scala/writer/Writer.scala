@@ -7,6 +7,8 @@ case class Writer[Log, A](log: Log, value: A) {
     Writer(semigroup.combine(log, nextLog), value)
 }
 
+//
+
 object Writer {
   implicit def monad[Log: Monoid]: Monad[Writer[Log, *]] = new Monad[Writer[Log, *]] {
     override def pure[A](a: A): Writer[Log, A] = Writer(Monoid[Log].empty, a)

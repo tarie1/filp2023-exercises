@@ -61,11 +61,11 @@ object ReaderApp extends App {
 
     def buyAll(wallet: Wallet): Reader[Exchanges, Wallet] =
       for {
-        euro   <- transact(Euro, Good(Dollar, 1))
-        yen    <- transact(Yen, Good(Dollar, 2))
-        ruble  <- transact(Ruble, Good(Dollar, 3))
-        dollar <- transact(Dollar, Good(Dollar, 4))
-        allCurrencies    <- aggregate(wallet.currency, NonEmptyList.of(euro, yen, ruble, dollar))
+        euro          <- transact(Euro, Good(Dollar, 1))
+        yen           <- transact(Yen, Good(Dollar, 2))
+        ruble         <- transact(Ruble, Good(Dollar, 3))
+        dollar        <- transact(Dollar, Good(Dollar, 4))
+        allCurrencies <- aggregate(wallet.currency, NonEmptyList.of(euro, yen, ruble, dollar))
       } yield wallet.copy(amount = wallet.amount - allCurrencies.price)
   }
 }

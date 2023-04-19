@@ -3,14 +3,11 @@ package reader
 import typeclasses.Monad
 
 case class Reader[R, A](run: R => A) {
-  def map[B](f: A => B): Reader[R, B] =
-    Reader(r => f(run(r)))
+  def map[B](f: A => B): Reader[R, B] = Reader(r => f(run(r)))
 
-  def flatMap[B](f: A => Reader[R, B]): Reader[R, B] =
-    Reader(r => f(run(r)).run(r))
+  def flatMap[B](f: A => Reader[R, B]): Reader[R, B] = Reader(r => f(run(r)).run(r))
 
-  def as[B](b: B): Reader[R, B] =
-    Reader(_ => b)
+  def as[B](b: B): Reader[R, B] = Reader(_ => b)
 }
 
 object Reader {

@@ -25,7 +25,9 @@ class TwitterServiceIO(api: TwitterApi) extends TwitterService[IO] {
       case Left(TweetNotExistError) => GetTweetResponse.notFound(tweetId)
     }
   def getTweets(ids: List[TweetId]): IO[GetTweetsResponse] =
-    ids.traverse(getTweet).map(
+    ids
+      .traverse(getTweet)
+      .map(
         _.foldLeft(GetTweetsResponse(Set.empty[TweetId], Set.empty[TweetInfo]))((tweets, response) =>
           response match {
             case GetTweetResponse.Found(tweetInfo)  => tweets.copy(found = tweets.found + tweetInfo)

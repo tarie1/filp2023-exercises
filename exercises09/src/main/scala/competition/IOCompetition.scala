@@ -34,10 +34,10 @@ class IOCompetition(service: TwitterService[IO], methods: CompetitionMethods[IO]
   }
   def winner(users: List[User], followers: Map[User, List[User]], botUser: User): IO[User] = {
     for {
-      tweetsIds      <- beginCompetition(users, followers)
-      _              <- methods.unlikeAll(botUser, tweetsIds)
+      tweetsIds <- beginCompetition(users, followers)
+      _         <- methods.unlikeAll(botUser, tweetsIds)
       susWinner <- methods.topAuthor(tweetsIds)
-      winner         <- IO.fromOption(susWinner)(TopAuthorNotFound)
+      winner    <- IO.fromOption(susWinner)(TopAuthorNotFound)
     } yield winner
   }
 }

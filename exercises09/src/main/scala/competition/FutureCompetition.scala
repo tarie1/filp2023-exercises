@@ -34,8 +34,8 @@ class FutureCompetition(service: TwitterService[Future], methods: CompetitionMet
   }
   def winner(users: List[User], followers: Map[User, List[User]], botUser: User): Future[User] = {
     for {
-      tweetIds       <- beginCompetition(users, followers)
-      _              <- methods.unlikeAll(botUser, tweetIds)
+      tweetIds  <- beginCompetition(users, followers)
+      _         <- methods.unlikeAll(botUser, tweetIds)
       susWinner <- methods.topAuthor(tweetIds)
       winner <- susWinner match {
         case Some(user) => Future.successful(user)

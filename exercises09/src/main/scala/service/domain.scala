@@ -8,7 +8,7 @@ object domain {
   object GetTweetResponse {
     case class NotFound(tweetId: TweetId) extends GetTweetResponse
     case class Found(info: TweetInfo)     extends GetTweetResponse
-    def found(info: TweetInfo): GetTweetResponse = Found(info)
+    def found(info: TweetInfo): GetTweetResponse     = Found(info)
     def notFound(tweetId: TweetId): GetTweetResponse = NotFound(tweetId)
   }
   case class GetTweetsResponse(notFound: Set[TweetId], found: Set[TweetInfo])

@@ -14,12 +14,26 @@ class CompetitionMethods[F[_]: Monad](service: TwitterService[F]) {
     * найти в них твиты где есть лайки указанного юзера
     * удалить эти лайки вызвав unlike
     */
-  def unlikeAll(user: User, tweetIds: List[TweetId]): F[Unit] = ???
+  def unlikeAll(user: User, tweetIds: List[TweetId]): F[Unit] = {
+    for {
+      tweets <- service.getTweets(tweetIds)
+      _ <- tweets.found.toList.traverse { tweet =>
+        if (tweet.likedBy.contains(user)) {
+          service.unlike(user, tweet.id)
+        } else Monad[F].unit
+      }
+    } yield ()
+  }
 
   /**
     * В этом методе надо:
     * Загрузить все указанные твиты
     * выбрать среди них тот твит у которого больше всего лайков или он раньше создан, если лайков одинаковое количество
     */
-  def topAuthor(tweetIds: List[TweetId]): F[Option[User]] = ???
+  def topAuthor(tweetIds: List[TweetId]): F[Option[User]] = {
+    for {
+      tweets <- service.getTweets(tweetIds)
+      topTweet = tweets.found.toList.sortBy(x => (-x.likedBy.size, x.created)).headOption
+    } yield topTweet.map(_.author)
+  }
 }

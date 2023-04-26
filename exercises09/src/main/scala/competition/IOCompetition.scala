@@ -22,9 +22,24 @@ import twitter.domain._
   * CompetitionMethods.unlikeAll
   * CompetitionMethods.topAuthor
   */
-class IOCompetition(service: TwitterService[IO], methods: CompetitionMethods[IO])
-    extends Competition[IO] {
-  def winner(users: List[User], followers: Map[User, List[User]], botUser: User): IO[User] = ???
+class IOCompetition(service: TwitterService[IO], methods: CompetitionMethods[IO]) extends Competition[IO] {
+  private val tweetWinner = s"%s will win!"
+  private def beginCompetition(users: List[User], followers: Map[User, List[User]]): IO[List[TweetId]] = {
+    users.parTraverse(user =>
+      for {
+        tweetId <- service.tweet(user, tweetWinner.format(user.id))
+        _       <- followers.getOrElse(user, List.empty[User]).traverse(service.like(_, tweetId)).map(identity)
+      } yield tweetId
+    )
+  }
+  def winner(users: List[User], followers: Map[User, List[User]], botUser: User): IO[User] = {
+    for {
+      tweetsIds      <- beginCompetition(users, followers)
+      _              <- methods.unlikeAll(botUser, tweetsIds)
+      susWinner <- methods.topAuthor(tweetsIds)
+      winner         <- IO.fromOption(susWinner)(TopAuthorNotFound)
+    } yield winner
+  }
 }
 
 object IOCompetitionRun extends IOApp {

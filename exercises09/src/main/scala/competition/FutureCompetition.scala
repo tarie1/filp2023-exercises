@@ -2,22 +2,18 @@ package competition
 
 import competition.domain.ScenarioError.TopAuthorNotFound
 import service.TwitterService
-import twitter.domain.User
+import twitter.domain.{TweetId, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Конкурс! Кто наберет больше лайков под своим постом - тот победил
-  *
   * Каждый пользовать постит твит "${user.id} will win!", и его фолловеры его лайкают
   * юзеры постят твиты параллельно, и так же параллельно их лайкают фолловеры
-  *
   * Но случилась беда: пользователь с именем bot нарушил правила конкурса, и все его лайки надо удалить
-  *
   * В конце надо вывести победителя
   * Если победителей несколько, то того, у которого твит был раньше
   * Если победителей нет, то вернуть ошибку TopAuthorNotFound
-  *
   * используйте методы
   * CompetitionMethods.unlikeAll
   * CompetitionMethods.topAuthor
@@ -25,11 +21,28 @@ import scala.concurrent.{ExecutionContext, Future}
 class FutureCompetition(service: TwitterService[Future], methods: CompetitionMethods[Future])(
     implicit ec: ExecutionContext
 ) extends Competition[Future] {
-  def winner(
-      users: List[User],
-      followers: Map[User, List[User]],
-      botUser: User
-  ): Future[User] = ???
+  private val tweetWinner = s"%s will win!"
+  private def beginCompetition(users: List[User], followers: Map[User, List[User]]): Future[List[TweetId]] = {
+    Future.traverse(users)(user =>
+      for {
+        tweetId <- service.tweet(user, tweetWinner.format(user.id))
+        _ <- Future
+          .traverse(followers.getOrElse(user, List.empty[User]))(user => service.like(user, tweetId))
+          .map(identity)
+      } yield tweetId
+    )
+  }
+  def winner(users: List[User], followers: Map[User, List[User]], botUser: User): Future[User] = {
+    for {
+      tweetIds       <- beginCompetition(users, followers)
+      _              <- methods.unlikeAll(botUser, tweetIds)
+      susWinner <- methods.topAuthor(tweetIds)
+      winner <- susWinner match {
+        case Some(user) => Future.successful(user)
+        case None       => Future.failed(TopAuthorNotFound)
+      }
+    } yield winner
+  }
 }
 
 object FutureCompetitionStart extends App {

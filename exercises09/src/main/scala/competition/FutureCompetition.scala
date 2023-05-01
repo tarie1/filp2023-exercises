@@ -28,7 +28,6 @@ class FutureCompetition(service: TwitterService[Future], methods: CompetitionMet
         tweetId <- service.tweet(user, tweetWinner.format(user.id))
         _ <- Future
           .traverse(followers.getOrElse(user, List.empty[User]))(user => service.like(user, tweetId))
-          .map(identity)
       } yield tweetId
     )
   }

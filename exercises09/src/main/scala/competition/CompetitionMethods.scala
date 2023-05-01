@@ -17,11 +17,11 @@ class CompetitionMethods[F[_]: Monad](service: TwitterService[F]) {
   def unlikeAll(user: User, tweetIds: List[TweetId]): F[Unit] = {
     for {
       tweets <- service.getTweets(tweetIds)
-      _ <- tweets.found.toList.traverse { tweet =>
-        if (tweet.likedBy.contains(user)) {
-          service.unlike(user, tweet.id)
-        } else Monad[F].unit
-      }
+      _ <- tweets.found.toList
+        .filter { tweet =>
+          tweet.likedBy.contains(user)
+        }
+        .traverse(tweet => service.unlike(user, tweet.id))
     } yield ()
   }
 

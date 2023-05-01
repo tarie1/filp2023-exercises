@@ -28,7 +28,7 @@ class IOCompetition(service: TwitterService[IO], methods: CompetitionMethods[IO]
     users.parTraverse(user =>
       for {
         tweetId <- service.tweet(user, tweetWinner.format(user.id))
-        _       <- followers.getOrElse(user, List.empty[User]).traverse(service.like(_, tweetId)).map(identity)
+        _       <- followers.getOrElse(user, List.empty[User]).traverse(service.like(_, tweetId))
       } yield tweetId
     )
   }
